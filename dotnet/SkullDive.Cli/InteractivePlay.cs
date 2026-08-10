@@ -44,7 +44,14 @@ namespace SkullDive.Cli
                 var view = match.HumanView();
                 PrintTable(view, match);
 
-                var action = ChooseAction(view, autopilot, autopilotRng);
+                GameAction action;
+                if (!ChooseAction(view, autopilot, autopilotRng, options.StopOnEof, out action))
+                {
+                    // 入力が尽きた。ここまでの盤面を見せて終了する。
+                    Console.WriteLine();
+                    Console.WriteLine("(選択肢の番号を渡すと続きから進みます)");
+                    return;
+                }
                 match.SubmitHumanAction(action);
                 PrintEvents(match);
             }
@@ -167,7 +174,8 @@ namespace SkullDive.Cli
 
         // ------------------------------------------------------------ input
 
-        private static GameAction ChooseAction(PlayerView view, AiBrain autopilot, IRng rng)
+        private static bool ChooseAction(PlayerView view, AiBrain autopilot, IRng rng, bool stopOnEof,
+            out GameAction action)
         {
             var legal = view.LegalActions;
 
@@ -180,24 +188,33 @@ namespace SkullDive.Cli
 
             string line = Console.ReadLine();
 
-            // 入力が尽きたら自動操縦に切り替える(パイプ実行やデモ用)。
             if (line == null)
             {
-                var chosen = autopilot.Decide(view, rng);
-                Console.WriteLine("[auto] " + ActionLabel(view, chosen));
-                return chosen;
+                if (stopOnEof)
+                {
+                    Console.WriteLine("(入力待ち)");
+                    action = default(GameAction);
+                    return false;
+                }
+
+                // 入力が尽きたら自動操縦に切り替える(パイプ実行やデモ用)。
+                action = autopilot.Decide(view, rng);
+                Console.WriteLine("[auto] " + ActionLabel(view, action));
+                return true;
             }
 
             line = line.Trim();
             if (line.Length == 0 || !int.TryParse(line, out int index) || index < 0 || index >= legal.Length)
             {
                 Console.WriteLine("  → 入力が不正なので自動選択します");
-                var chosen = autopilot.Decide(view, rng);
-                Console.WriteLine("[auto] " + ActionLabel(view, chosen));
-                return chosen;
+                action = autopilot.Decide(view, rng);
+                Console.WriteLine("[auto] " + ActionLabel(view, action));
+                return true;
             }
 
-            return legal[index];
+            action = legal[index];
+            Console.WriteLine("  → " + ActionLabel(view, action));
+            return true;
         }
 
         private static string ActionLabel(PlayerView view, GameAction action)

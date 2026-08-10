@@ -26,6 +26,13 @@ namespace SkullDive.Cli
         public int TimeoutSeconds = 60;
         public bool IdleGuest;
 
+        /// <summary>
+        /// 入力が尽きた時点で自動操縦せずに終了する。
+        /// 標準入力で選択肢を渡して 1 手ずつ進める(チャット越しのプレイなど)ための指定。
+        /// シードが固定なので、同じ選択列を渡せば必ず同じ盤面が再現される。
+        /// </summary>
+        public bool StopOnEof;
+
         public GameConfig BuildConfig()
         {
             var config = Classic ? GameConfig.Classic() : GameConfig.Default();
@@ -75,6 +82,9 @@ namespace SkullDive.Cli
                         options.Mode = CliMode.NetSmoke;
                         if (i + 1 < args.Length && !args[i + 1].StartsWith("--")) options.ServerUrl = args[++i];
                         break;
+                    case "--stop-on-eof":
+                        options.StopOnEof = true;
+                        break;
                     case "--idle-guest":
                         options.IdleGuest = true;
                         break;
@@ -120,6 +130,10 @@ namespace SkullDive.Cli
             Console.WriteLine("  --crown-value <int>          クラウンのカウント値 (既定 2)");
             Console.WriteLine("  --crown-one-in-own-stack     自分の山のクラウンは 1 枚分として扱う");
             Console.WriteLine("  --points <int>               勝利に必要なポイント (既定 2)");
+            Console.WriteLine("  --stop-on-eof                入力が尽きたら自動操縦せず終了する");
+            Console.WriteLine();
+            Console.WriteLine("  1 手ずつ進める例 (シード固定なので同じ選択列は同じ盤面になる):");
+            Console.WriteLine("    printf '0\\n2\\n' | dotnet run -- --stop-on-eof");
         }
     }
 }
