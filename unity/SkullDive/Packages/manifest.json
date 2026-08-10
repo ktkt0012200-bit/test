@@ -1,5 +1,11 @@
 {
+  "comment": "外部パッケージには依存していない。JSON は自前実装 (SkullDive.Net.WireCodec) を使う。以下はすべて Unity 同梱の組み込みモジュールで、バージョンは常に 1.0.0。",
   "dependencies": {
-    "com.unity.nuget.newtonsoft-json": "3.2.1"
+    "com.unity.modules.imgui": "1.0.0",
+    "com.unity.modules.ui": "1.0.0",
+    "com.unity.modules.uielements": "1.0.0",
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.unitywebrequest": "1.0.0"
   }
 }

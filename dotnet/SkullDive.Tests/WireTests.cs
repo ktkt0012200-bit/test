@@ -7,9 +7,11 @@ using SkullDive.Net;
 namespace SkullDive.Tests
 {
     /// <summary>
-    /// ワイヤーフォーマットのテスト。
-    /// サーバは System.Text.Json、Unity は Newtonsoft.Json を使うため、
-    /// 「public フィールドがそのまま出る」形を崩さないことが両者の互換性の条件になる。
+    /// DTO の形のテスト。
+    ///
+    /// 本番の通信は WireCodec が担当するが、DTO が「標準的なシリアライザで素直に
+    /// 往復できる形」であることは維持したい(デバッグや将来のツール連携のため)。
+    /// ここでは System.Text.Json を使ってその性質を固定している。
     /// </summary>
     public static class WireTests
     {
@@ -50,8 +52,8 @@ namespace SkullDive.Tests
             T.Test("System.Text.Json はフィールドを含める設定でなければ壊れる", () =>
             {
                 // IncludeFields を忘れるとフィールドが丸ごと消える(プロパティだけが残る)。
-                // Newtonsoft 側は既定でフィールドを書き出すため、この設定漏れは
-                // 「サーバから送った内容がクライアントで空になる」形で表面化する。
+                // DTO をフィールドで構成している以上、リフレクション型の
+                // シリアライザを使うときは必ずこの設定が要る、という事実を固定しておく。
                 var message = new ClientMessage { Kind = ClientMessageType.Action, Name = "test" };
 
                 string withoutFields = JsonSerializer.Serialize(message, new JsonSerializerOptions());
@@ -83,7 +85,7 @@ namespace SkullDive.Tests
 
             T.Test("enum は数値として書き出される", () =>
             {
-                // Newtonsoft.Json の既定も数値なので、文字列化するとクライアントと合わなくなる。
+                // enum を文字列化すると WireCodec と噛み合わなくなる。
                 string json = JsonSerializer.Serialize(GameAction.Pass(1), JsonCodec.Options);
                 T.True(json.Contains("\"Kind\":2"), "ActionKind.Pass は 2 として出る: " + json);
             });

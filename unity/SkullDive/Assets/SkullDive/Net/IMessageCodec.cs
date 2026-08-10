@@ -1,11 +1,10 @@
 namespace SkullDive.Net
 {
     /// <summary>
-    /// JSON の読み書き。実装をプラットフォームごとに差し替えるための境界。
+    /// メッセージの読み書き。既定の実装は WireCodec で、サーバも Unity もこれを使う。
     ///
-    /// サーバは System.Text.Json、Unity は Newtonsoft.Json を使う。
-    /// どちらも netstandard2.1 に同じライブラリを持ち込めないため、
-    /// 共有コードはこのインターフェース越しにしか JSON を触らない。
+    /// インターフェースとして切っておく理由は、WebGL 向けに
+    /// ブラウザの WebSocket を使う実装へ差し替える余地を残すため。
     /// </summary>
     public interface IMessageCodec
     {

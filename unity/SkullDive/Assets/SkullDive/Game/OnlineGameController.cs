@@ -71,7 +71,7 @@ namespace SkullDive.Game
 
             Status = "接続中...";
             _cancellation = new CancellationTokenSource();
-            _client = new GameClient(new NewtonsoftCodec());
+            _client = new GameClient(WireCodec.Instance);
 
             try
             {

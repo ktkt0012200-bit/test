@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Unity Editor が無い環境で、Unity 向けコード (Assets/SkullDive/Game, Editor) の
+    コンパイルを検証するためだけのプロジェクト。成果物は使わない。
+
+    UnityEngine は Unity 公式の参照アセンブリ (NuGet: UnityEngine.Modules) を使うので、
+    Game/ については実際の Unity API シグネチャに対する本物の検証になる。
+    UnityEditor 側は公開された参照アセンブリが無いため Stubs/ の最小定義を当てている
+    (こちらは「自分で書いた宣言に対する検証」であり、Unity 本体との一致は保証しない)。
+
+    Unity プロジェクト外に置いてあるので、Unity がこのファイルを読むことはない。
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <AssemblyName>SkullDive.UnityCheck</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <Nullable>disable</Nullable>
+    <!-- 参照アセンブリはメソッド本体を持たないため、その警告だけ黙らせる。 -->
+    <NoWarn>CS0626;CS8021</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="UnityEngine.Modules" Version="2021.3.33" IncludeAssets="compile" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkullDive.Shared/SkullDive.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Stubs/**/*.cs" />
+    <Compile Include="../../unity/SkullDive/Assets/SkullDive/Game/**/*.cs" LinkBase="Game" />
+    <Compile Include="../../unity/SkullDive/Assets/SkullDive/Editor/**/*.cs" LinkBase="Editor" />
+  </ItemGroup>
+
+</Project>

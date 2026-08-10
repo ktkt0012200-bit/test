@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SkullDive.Core;
-using SkullDive.Json;
 using SkullDive.Net;
 
 namespace SkullDive.Server
@@ -71,7 +70,7 @@ namespace SkullDive.Server
                     ClientMessage message;
                     try
                     {
-                        message = JsonCodec.DecodeClient(json);
+                        message = WireCodec.DecodeClient(json);
                     }
                     catch (Exception)
                     {
@@ -150,7 +149,7 @@ namespace SkullDive.Server
         private static async Task SendRawErrorAsync(WebSocket socket, string error)
         {
             if (socket.State != WebSocketState.Open) return;
-            var bytes = Encoding.UTF8.GetBytes(JsonCodec.EncodeServer(new ServerMessage
+            var bytes = Encoding.UTF8.GetBytes(WireCodec.EncodeServer(new ServerMessage
             {
                 Kind = ServerMessageType.Error,
                 Error = error,

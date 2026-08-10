@@ -1,9 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    System.Text.Json によるワイヤーフォーマット実装。
-    サーバ・CLI・テストが共有する。Unity 側は Newtonsoft.Json で同じ JSON を扱うため、
-    このプロジェクトは Unity には入らない。
+    System.Text.Json による参照実装。テスト専用。
+
+    本番の通信は WireCodec (手書き・リフレクション非依存) が担当する。
+    こちらは「WireCodec の出力が標準的なシリアライザと同じ形か」を突き合わせる
+    独立した検証用オラクルとしてのみ使う。
   -->
 
   <PropertyGroup>

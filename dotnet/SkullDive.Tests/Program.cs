@@ -15,6 +15,7 @@ namespace SkullDive.Tests
             AiTests.Register();
             SoakTests.Register();
             WireTests.Register();
+            CodecTests.Register();
 
             return T.Run();
         }

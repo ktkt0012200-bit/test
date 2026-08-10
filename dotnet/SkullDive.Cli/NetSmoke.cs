@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using SkullDive.Ai;
 using SkullDive.Core;
-using SkullDive.Json;
 using SkullDive.Net;
 
 namespace SkullDive.Cli
@@ -22,7 +21,8 @@ namespace SkullDive.Cli
     {
         public static async Task<int> RunAsync(string url, int bots, int timeoutSeconds, bool idleGuest = false)
         {
-            var codec = new JsonCodec();
+            // Unity クライアントと同一の実装を使う。
+            var codec = WireCodec.Instance;
             var failures = new List<string>();
 
             using var host = new GameClient(codec);

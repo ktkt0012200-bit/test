@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="../SkullDive.Shared/SkullDive.Shared.csproj" />
-    <ProjectReference Include="../SkullDive.Json/SkullDive.Json.csproj" />
   </ItemGroup>
 
 </Project>

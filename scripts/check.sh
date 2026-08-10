@@ -10,6 +10,12 @@ echo "== build =="
 dotnet build SkullDive.sln -v q --nologo
 
 echo
+echo "== Unity 向けコードのコンパイル検証 =="
+# Game/ は Unity 公式の参照アセンブリ (NuGet: UnityEngine.Modules) に対する本物の検証。
+# Editor/ は UnityEditor の参照アセンブリが公開されていないため自前スタブに対する検証。
+dotnet build SkullDive.UnityCheck -v q --nologo
+
+echo
 echo "== unit / soak tests =="
 dotnet run --project SkullDive.Tests --nologo
 

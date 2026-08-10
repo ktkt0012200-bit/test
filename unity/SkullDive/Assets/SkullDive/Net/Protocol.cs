@@ -5,12 +5,9 @@ namespace SkullDive.Net
 {
     /// <summary>
     /// クライアントとサーバで共有するワイヤーフォーマット。
+    /// 読み書きは WireCodec が担当し、サーバと Unity で同一の実装を使う。
     ///
-    /// シリアライザは意図的に共有していない(サーバは System.Text.Json、Unity は Newtonsoft.Json)。
-    /// どちらも「public フィールド / enum は数値 / プロパティ名そのまま」で一致するため、
-    /// NuGet 依存を Unity 側に持ち込まずに同じ JSON を読み書きできる。
-    /// System.Text.Json 側は IncludeFields = true が必須。
-    ///
+    /// DTO は public フィールドだけで構成し、enum は数値として送る。
     /// enum の数値は互換性のため変更禁止。
     /// </summary>
     public static class Protocol

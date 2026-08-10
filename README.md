@@ -5,6 +5,7 @@
 
 - ゲーム設計とバランス実測値: [docs/game-design.md](docs/game-design.md)
 - オンライン対戦の構成: [docs/online-architecture.md](docs/online-architecture.md)
+- **Unity で動かす手順**: [docs/unity-setup.md](docs/unity-setup.md)
 
 ## すぐ試す
 
@@ -37,11 +38,12 @@ unity/SkullDive/Assets/SkullDive/
   Editor/   エディタ拡張
 
 dotnet/
-  SkullDive.Shared/   上記 Core/Ai/Net を「同じファイルのまま」コンパイルする
-  SkullDive.Json/     System.Text.Json による通信実装 (サーバ・CLI・テスト用)
-  SkullDive.Tests/    61 テスト。外部パッケージ非依存のコンソールランナー
-  SkullDive.Cli/      ターミナル版ゲーム + バランス測定 + 結合テスト
-  SkullDive.Server/   権威サーバ (ASP.NET Core WebSocket)
+  SkullDive.Shared/     上記 Core/Ai/Net を「同じファイルのまま」コンパイルする
+  SkullDive.Tests/      73 テスト。外部パッケージ非依存のコンソールランナー
+  SkullDive.Cli/        ターミナル版ゲーム + バランス測定 + 結合テスト
+  SkullDive.Server/     権威サーバ (ASP.NET Core WebSocket)
+  SkullDive.UnityCheck/ Unity Editor 無しで Unity 向けコードのコンパイルを検証する
+  SkullDive.Json/       System.Text.Json による参照実装 (テストのオラクル専用)
 ```
 
 ### 設計の要点
@@ -74,7 +76,21 @@ Unity・サーバ・テスト・CLI がすべて同一のコードを動かす�
 ホストのメモリに全員の伏せカードが載るため、ブラフゲームでは原理的にチートを防げない。
 理由と構成は [docs/online-architecture.md](docs/online-architecture.md) に詳しい。
 
-**4. バランスは測って決める**
+**4. 外部パッケージにゼロ依存**
+
+通信の JSON はリフレクションを使わない手書き実装 (`Net/WireCodec.cs`) で、サーバと Unity が
+同一のコードを使う。理由は 3 つ:
+
+- Unity 側にパッケージを追加させない(セットアップの手間とバージョン依存が消える)
+- **IL2CPP のマネージドコード除去でフィールドが消えない。** リフレクション経由でしか
+  触られない DTO のフィールドは実機ビルドで削られることがあり、
+  「エディタでは動くが実機で空になる」という形で壊れる
+- 実装が 1 つなので、シリアライザ間で書式がズレる余地が無い
+
+手書きなので、標準的なシリアライザ (System.Text.Json) を独立したオラクルとして
+双方向の相互運用をテストで固定している。
+
+**5. バランスは測って決める**
 
 `--compare` で「原作 / クラウン value=2 / value=3 / 自分の山は 1 枚分」を同条件で比較できる。
 クラウンの値を 2 にした根拠は実測値。詳細は [docs/game-design.md](docs/game-design.md)。
@@ -83,13 +99,17 @@ Unity・サーバ・テスト・CLI がすべて同一のコードを動かす�
 
 ```
 unity/SkullDive/ を Unity Hub から開く
-→ メニュー Tools > SkullDive > 動作確認シーンを作成
+→ Tools > SkullDive > 1. 動作確認シーンを作成
+→ Tools > SkullDive > 2. エンジンの自己診断を実行
+→ Tools > SkullDive > 3. モバイル向け設定を適用
 → 再生
 ```
 
+**追加パッケージのインストールは不要**(外部依存ゼロ)。
 `ProjectSettings/ProjectVersion.txt` は `6000.0.0f1` (Unity 6 LTS) を指している。
 別のバージョンを使う場合はこのファイルを書き換えるか、Unity Hub でバージョンを選び直す。
-依存パッケージは `com.unity.nuget.newtonsoft-json` のみ。
+
+手順とトラブルシューティングの詳細は [docs/unity-setup.md](docs/unity-setup.md)。
 
 ## 検証状況
 
@@ -97,12 +117,19 @@ unity/SkullDive/ を Unity Hub から開く
 
 | 対象 | 状態 |
 |---|---|
-| ルールエンジン / 秘匿処理 / AI / 確率計算 | **テスト済み** (61 テスト。2〜6 人 × クラウン有無で 1200 マッチの soak を含む) |
+| ルールエンジン / 秘匿処理 / AI / 確率計算 / 通信コーデック | **テスト済み** (73 テスト。2〜6 人 × クラウン有無で 1200 マッチの soak を含む) |
 | 通信プロトコルの往復 | **テスト済み** |
 | サーバ (ルーム / 検証 / bot / 時間切れ代打 / ラウンド送り) | **実サーバに接続する結合テストで確認済み** |
-| Unity 側 (`Game/` `Editor/`) | **未検証。** この環境に Unity Editor が無いためコンパイル確認ができていない |
+| Unity `Game/` (`SoloGameController` / `OnlineGameController` / `HarnessScreen`) | **コンパイル検証済み。** Unity 公式の参照アセンブリ (NuGet `UnityEngine.Modules`) に対して通る |
+| Unity `Editor/` (`HarnessSceneBuilder`) | **自前スタブに対してのみ検証。** UnityEditor の参照アセンブリが公開されていないため、Unity 本体とのシグネチャ一致は保証されない |
+| Unity 上での実行 (再生、シーン生成) | **未検証。** この環境に Unity Editor が無いため |
 
-`Game/` と `Editor/` は Unity Editor で最初に一度確認してほしい。
+Unity 向けコードのコンパイル検証は `dotnet build dotnet/SkullDive.UnityCheck` で再現できる
+(`./scripts/check.sh` にも含まれている)。Unity Editor では
+**Tools > SkullDive > 2. エンジンの自己診断を実行** を最初に押すのがおすすめ。
+共有エンジン・AI・秘匿処理が Unity 上で動いていることが確定するので、
+以降の不具合を UI 層だけに絞り込める。
+
 `HarnessScreen` は IMGUI で書いた**開発用の動作確認画面**で、製品 UI ではない。
 プレハブも Canvas も不要で、シーンにスクリプトを 1 個置くだけでソロ / オンラインを通しで遊べる。
 実機向けの UI(縦持ち片手操作、スワイプでめくる演出、読みメーター)は

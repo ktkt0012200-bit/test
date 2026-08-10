@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using SkullDive.Ai;
 using SkullDive.Core;
-using SkullDive.Json;
 using SkullDive.Net;
 
 namespace SkullDive.Server
@@ -442,7 +441,7 @@ namespace SkullDive.Server
             var socket = seat.Socket;
             if (socket == null || socket.State != WebSocketState.Open) return;
 
-            var bytes = Encoding.UTF8.GetBytes(JsonCodec.EncodeServer(message));
+            var bytes = Encoding.UTF8.GetBytes(WireCodec.EncodeServer(message));
 
             await seat.SendGate.WaitAsync().ConfigureAwait(false);
             try

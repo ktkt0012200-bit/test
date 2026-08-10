@@ -5,11 +5,14 @@ using SkullDive.Net;
 namespace SkullDive.Json
 {
     /// <summary>
-    /// サーバ側の JSON 実装。
+    /// System.Text.Json による参照実装。テスト専用のオラクル。
+    ///
+    /// 本番の通信は WireCodec(手書き・リフレクション非依存)が担当する。
+    /// こちらは「WireCodec の出力が標準的なシリアライザと相互運用できるか」を
+    /// 独立に確かめるためだけに使う。
     ///
     /// IncludeFields は必須。DTO は public フィールドで構成されているため、
-    /// これを忘れると中身が空のメッセージを送ることになる。
-    /// enum は既定どおり数値で書き出す(Unity の Newtonsoft.Json の既定と一致させるため)。
+    /// これを忘れると中身が空になる。
     /// </summary>
     public sealed class JsonCodec : IMessageCodec
     {
