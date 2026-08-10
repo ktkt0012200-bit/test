@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    System.Text.Json によるワイヤーフォーマット実装。
+    サーバ・CLI・テストが共有する。Unity 側は Newtonsoft.Json で同じ JSON を扱うため、
+    このプロジェクトは Unity には入らない。
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>SkullDive.Json</AssemblyName>
+    <RootNamespace>SkullDive.Json</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkullDive.Shared/SkullDive.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

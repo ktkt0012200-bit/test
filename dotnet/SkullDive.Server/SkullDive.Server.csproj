@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    権威サーバ。共有エンジンをそのまま動かし、クライアントには秘匿処理済みの View だけを配る。
+    NuGet パッケージには依存していない(WebSocket も JSON もフレームワーク同梱)。
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>SkullDive.Server</AssemblyName>
+    <RootNamespace>SkullDive.Server</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkullDive.Shared/SkullDive.Shared.csproj" />
+    <ProjectReference Include="../SkullDive.Json/SkullDive.Json.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    ターミナルで遊べるフロントエンド兼バランス測定ツール。
+    Unity を開かずにルールと AI の手触りを確認でき、CI でも回せる。
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>SkullDive.Cli</AssemblyName>
+    <RootNamespace>SkullDive.Cli</RootNamespace>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkullDive.Shared/SkullDive.Shared.csproj" />
+    <ProjectReference Include="../SkullDive.Json/SkullDive.Json.csproj" />
+  </ItemGroup>
+
+</Project>

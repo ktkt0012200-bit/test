@@ -1,0 +1,36 @@
+# ---- .NET ----
+bin/
+obj/
+artifacts/
+*.user
+*.suo
+
+# ---- Unity ----
+# Unity が再生成するもの。リポジトリに入れると衝突と肥大化の原因になる。
+unity/SkullDive/Library/
+unity/SkullDive/Temp/
+unity/SkullDive/Obj/
+unity/SkullDive/Build/
+unity/SkullDive/Builds/
+unity/SkullDive/Logs/
+unity/SkullDive/UserSettings/
+unity/SkullDive/MemoryCaptures/
+unity/SkullDive/Recordings/
+unity/SkullDive/Assets/AssetStoreTools*
+unity/SkullDive/Packages/packages-lock.json
+
+# Unity が生成する IDE プロジェクト
+unity/SkullDive/*.csproj
+unity/SkullDive/*.sln
+unity/SkullDive/*.unityproj
+unity/SkullDive/.vsconfig
+
+# .meta は Unity が生成し、参照解決に必要なのでコミット対象にする。
+# ただし無視対象フォルダの .meta は不要。
+unity/SkullDive/Library.meta
+unity/SkullDive/Temp.meta
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+*.swp

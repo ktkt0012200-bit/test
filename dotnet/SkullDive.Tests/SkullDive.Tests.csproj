@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    外部パッケージに依存しないコンソール型のテストランナー。
+    NuGet 復元なしでどこでも `dotnet run` できるようにしてあり、失敗時は終了コード 1 を返すので
+    そのまま CI に載せられる。
+  -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <AssemblyName>SkullDive.Tests</AssemblyName>
+    <RootNamespace>SkullDive.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../SkullDive.Shared/SkullDive.Shared.csproj" />
+    <ProjectReference Include="../SkullDive.Json/SkullDive.Json.csproj" />
+  </ItemGroup>
+
+</Project>

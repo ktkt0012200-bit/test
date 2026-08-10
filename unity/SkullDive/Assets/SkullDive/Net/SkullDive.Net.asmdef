@@ -1,0 +1,16 @@
+{
+    "name": "SkullDive.Net",
+    "rootNamespace": "SkullDive.Net",
+    "references": [
+        "SkullDive.Core"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
